@@ -216,3 +216,31 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---------------------------------------------------------------------------
+# Added for this project
+# ---------------------------------------------------------------------------
+
+# Secrets and local config. Nothing resembling a credential belongs in this repo.
+.env
+*.env
+!.env.example
+.azure/
+*.pem
+*.key
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+# tfvars can carry addresses and object IDs, so example files only
+*.tfvars
+!*.tfvars.example
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
