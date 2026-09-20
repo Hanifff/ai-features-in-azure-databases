@@ -1,0 +1,28 @@
+# Copy to terraform.tfvars and fill in your own values, or let
+# scripts/setup.sh write it for you from your current az login.
+#
+# terraform.tfvars is gitignored. Nothing here is a secret, but the ids are
+# yours and do not belong in a public repository.
+
+subscription_id = "00000000-0000-0000-0000-000000000000"
+tenant_id       = "00000000-0000-0000-0000-000000000000"
+
+location    = "swedencentral"
+name_prefix = "aidb"
+
+# The Entra identity that administers PostgreSQL. Password authentication is
+# disabled on the server, so without this nobody can connect at all.
+#   az ad signed-in-user show --query "{id:id, upn:userPrincipalName}"
+postgres_entra_admin_object_id = "00000000-0000-0000-0000-000000000000"
+postgres_entra_admin_name      = "you@example.com"
+
+# Leave empty to grant the identity running Terraform.
+admin_object_ids = []
+
+# Your own address. Narrow this rather than opening the firewall.
+#   curl -s https://api.ipify.org
+allowed_ip_rules = ["203.0.113.10/32"]
+
+# Convenient when presenting from a network whose address is unknown in advance,
+# and worth turning off again afterwards.
+allow_all_networks = false

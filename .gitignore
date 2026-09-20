@@ -244,3 +244,32 @@ crash.log
 .idea/
 .DS_Store
 Thumbs.db
+
+# ---------------------------------------------------------------------------
+# This repository
+# ---------------------------------------------------------------------------
+
+# Local configuration. Holds no keys, every service authenticates with Entra ID,
+# but the endpoints and ids in it are yours.
+.env
+*.env
+!.env.example
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+tfplan*
+crash.log
+
+# Azure CLI
+.azure/
+
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

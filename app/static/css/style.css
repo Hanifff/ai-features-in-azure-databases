@@ -1,0 +1,414 @@
+/* Microsoft Fluent palette, projector first.
+   Large type, high contrast, restrained colour. Assume the back row is 15 metres
+   away and the room lights are on.
+
+   Colour carries meaning here: each product owns one accent, so the room can tell
+   which database is on screen without reading the heading. */
+
+:root {
+  /* Fluent neutrals */
+  --ink: #201f1e;
+  --muted: #605e5c;
+  --line: #edebe9;
+  --line-2: #e1dfdd;
+  --surface: #ffffff;
+  --bg: #faf9f8;
+
+  /* Microsoft communication blue */
+  --blue: #0078d4;
+  --blue-dark: #106ebe;
+  --blue-darker: #005a9e;
+  --blue-tint: #eff6fc;
+
+  /* Product accents */
+  --cosmos: #0078d4;
+  --pg: #336791;
+  --pg-tint: #eef3f7;
+  --foundry: #8661c5;
+  --foundry-tint: #f3effa;
+  --graph: #c239b3;
+  --graph-tint: #fbf0fa;
+
+  /* Microsoft logo colours, used only in the rule at the top of the page */
+  --ms-red: #f25022;
+  --ms-green: #7fba00;
+  --ms-blue: #00a4ef;
+  --ms-yellow: #ffb900;
+
+  /* Semantic */
+  --ok: #107c10;
+  --ok-tint: #f1faf1;
+  --bad: #a4262c;
+  --bad-tint: #fdf3f4;
+  --attention: #ffb900;
+  --attention-tint: #fffcf4;
+
+  --shadow-2: 0 1.6px 3.6px rgba(0, 0, 0, .10), 0 .3px .9px rgba(0, 0, 0, .07);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+/* The only decoration on the page. */
+body::before {
+  content: "";
+  display: block;
+  height: 4px;
+  background: linear-gradient(to right,
+    var(--ms-red) 0 25%, var(--ms-green) 25% 50%,
+    var(--ms-blue) 50% 75%, var(--ms-yellow) 75% 100%);
+}
+
+/* ------------------------------------------------------------------ header */
+
+header {
+  padding: 22px 40px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line-2);
+  box-shadow: var(--shadow-2);
+}
+.head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; }
+header h1 {
+  margin: 0;
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+header .sub { margin: 6px 0 0; color: var(--muted); font-size: 17px; }
+
+nav { display: flex; gap: 8px; flex-shrink: 0; }
+nav a {
+  padding: 9px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  transition: background .15s ease, color .15s ease;
+}
+nav a:hover { background: var(--line); color: var(--ink); }
+nav a.on { color: #fff; border-color: transparent; box-shadow: var(--shadow-2); }
+nav a.on.cosmos { background: var(--cosmos); }
+nav a.on.postgres { background: var(--pg); }
+nav a.on.foundry { background: var(--foundry); }
+nav a.on.graph { background: var(--graph); }
+nav a.on.overview { background: var(--ink); }
+
+/* ---------------------------------------------------------------- overview */
+
+.store-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 4px; }
+.store {
+  padding: 18px 20px;
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-top: 3px solid var(--muted);
+  border-radius: 4px;
+}
+.store.cosmos { border-top-color: var(--cosmos); }
+.store.postgres { border-top-color: var(--pg); }
+.store.graph { border-top-color: var(--graph); }
+.store h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+.store b {
+  display: block;
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.store.cosmos b { color: var(--cosmos); }
+.store.postgres b { color: var(--pg); }
+.store.graph b { color: var(--graph); }
+.store > span { font-size: 13px; color: var(--muted); }
+.store p { margin: 10px 0 12px; font-size: 15px; color: var(--muted); }
+.store a { font-weight: 600; text-decoration: none; color: var(--blue); }
+
+/* ------------------------------------------------------------------- graph */
+
+.panel.graph { border-left-color: var(--graph); }
+.panel.graph h2 .n { color: var(--graph); background: var(--graph-tint); border-color: #eccae8; }
+.panel.graph button { background: var(--graph); }
+.panel.graph button:hover:not(:disabled) { background: #a62f99; }
+.panel.graph summary { color: var(--graph); }
+
+svg.graphviz {
+  width: 100%;
+  height: auto;
+  margin: 14px 0;
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+}
+svg.graphviz .edge { stroke: var(--line-2); stroke-width: 2; }
+svg.graphviz .edge.new { stroke: var(--line-2); stroke-width: 2; }
+svg.graphviz .edge.meaning { stroke: var(--graph); stroke-width: 3; stroke-dasharray: 6 4; }
+svg.graphviz .node circle { stroke-width: 2; }
+svg.graphviz .node.code circle { fill: var(--ink); stroke: var(--ink); }
+svg.graphviz .node.found circle { fill: #fff; stroke: var(--muted); }
+svg.graphviz .node.new circle { fill: #fff; stroke: var(--muted); }
+svg.graphviz .node.meaning circle { fill: var(--graph-tint); stroke: var(--graph); stroke-width: 4; }
+svg.graphviz text {
+  font-family: "Segoe UI", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--ink);
+}
+svg.graphviz .node.code text { fill: #fff; font-family: "Cascadia Mono", monospace; font-size: 14px; }
+svg.graphviz .node.meaning text { fill: var(--graph); }
+svg.graphviz text.count { font-size: 14px; font-weight: 600; fill: var(--muted); }
+svg.graphviz .node.meaning text.count { fill: var(--graph); }
+
+.reveal {
+  margin: 4px 0 12px;
+  padding: 12px 16px;
+  background: var(--graph-tint);
+  border-left: 4px solid var(--graph);
+  border-radius: 4px;
+  font-size: 17px;
+}
+td b.no { color: var(--graph); }
+
+/* ------------------------------------------------------------------ panels */
+
+main { padding: 24px 40px 60px; max-width: 1500px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-left: 4px solid var(--line-2);
+  border-radius: 4px;
+  box-shadow: var(--shadow-2);
+  padding: 22px 26px;
+  margin-bottom: 20px;
+}
+.panel.cosmos { border-left-color: var(--cosmos); }
+.panel.postgres { border-left-color: var(--pg); }
+.panel.foundry { border-left-color: var(--foundry); }
+
+.panel h2 {
+  margin: 0 0 6px;
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  font-size: 23px;
+  font-weight: 600;
+}
+.panel h2 .n {
+  display: inline-block;
+  min-width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 31px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  vertical-align: 2px;
+}
+.panel.cosmos h2 .n { color: var(--cosmos); background: var(--blue-tint); border-color: #cfe4f7; }
+.panel.postgres h2 .n { color: var(--pg); background: var(--pg-tint); border-color: #d3e0ea; }
+.panel.foundry h2 .n { color: var(--foundry); background: var(--foundry-tint); border-color: #ddd2f2; }
+
+.lede { margin: 0 0 14px; color: var(--muted); max-width: 92ch; }
+
+/* ---------------------------------------------------------------- controls */
+
+.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+select, input[type=text] {
+  font-family: inherit;
+  font-size: 17px;
+  padding: 9px 12px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  min-width: 320px;
+}
+input[type=text] { min-width: 480px; }
+select:focus, input[type=text]:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+
+button {
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 10px 24px;
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+button:hover:not(:disabled) { background: var(--blue-dark); }
+button:active:not(:disabled) { background: var(--blue-darker); }
+button:disabled { background: var(--muted); cursor: default; }
+.panel.postgres button { background: var(--pg); }
+.panel.postgres button:hover:not(:disabled) { background: #2b5679; }
+.panel.foundry button { background: var(--foundry); }
+.panel.foundry button:hover:not(:disabled) { background: #7150b0; }
+
+button.secondary, .panel.postgres button.secondary {
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line-2);
+}
+button.secondary:hover:not(:disabled), .panel.postgres button.secondary:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--bg);
+}
+
+/* ------------------------------------------------------------------ tables */
+
+table.rows { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 16px; }
+table.rows th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line-2);
+  padding: 8px 10px;
+}
+table.rows td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.rows tr.detail td { padding-top: 0; color: var(--muted); font-size: 15px; }
+.mono { font-family: "Cascadia Mono", ui-monospace, Consolas, monospace; font-size: 15px; }
+
+.stat-row { display: flex; gap: 14px; margin: 4px 0 14px; flex-wrap: wrap; }
+.stat {
+  padding: 12px 20px;
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  min-width: 108px;
+}
+.stat b {
+  display: block;
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--blue);
+}
+.panel.postgres .stat b { color: var(--pg); }
+.stat span { font-size: 13px; color: var(--muted); }
+.reported { margin: 4px 0 0; color: var(--muted); }
+
+/* ----------------------------------------------------------- query display */
+
+details { margin: 10px 0 0; }
+summary {
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+  padding: 4px 0;
+}
+.panel.postgres summary { color: var(--pg); }
+pre.sql {
+  font-family: "Cascadia Mono", ui-monospace, Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.5;
+  background: #1b1a19;
+  color: #f3f2f1;
+  padding: 16px 18px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ---------------------------------------------------------------- messages */
+
+.note {
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  background: var(--attention-tint);
+  border: 1px solid #f7e3ab;
+  border-left: 4px solid var(--attention);
+  border-radius: 4px;
+  max-width: 100ch;
+}
+.meta { font-size: 14px; color: var(--muted); padding: 2px 0 4px; }
+.empty {
+  padding: 14px 16px;
+  background: var(--bad-tint);
+  border-left: 4px solid var(--bad);
+  border-radius: 4px;
+  font-weight: 600;
+  color: var(--bad);
+}
+.working { color: var(--muted); }
+.failed {
+  padding: 12px 16px;
+  background: var(--bad-tint);
+  border-left: 4px solid var(--bad);
+  border-radius: 4px;
+  font-family: "Cascadia Mono", ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--bad);
+}
+.hint { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+.banner.error {
+  margin: 16px 40px 0;
+  padding: 14px 18px;
+  background: var(--bad-tint);
+  border-left: 4px solid var(--bad);
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------- grounded split */
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 4px; }
+.side {
+  padding: 18px 20px;
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-top: 3px solid var(--muted);
+  border-radius: 4px;
+}
+.side.grounded { background: var(--ok-tint); border-color: #c6e3c6; border-top-color: var(--ok); }
+.side h3 { margin: 0 0 10px; font-size: 17px; font-weight: 600; color: var(--muted); }
+.side.grounded h3 { color: var(--ok); }
+.answer p { margin: 0 0 10px; }
+.answer p:last-child { margin-bottom: 0; }
+.answer ul { margin: 0 0 10px; padding-left: 22px; }
+.answer li { margin-bottom: 5px; }
+.answer .tid {
+  font-family: "Cascadia Mono", ui-monospace, monospace;
+  font-size: 14px;
+  padding: 1px 6px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.side.grounded .answer .tid { color: var(--ok); border-color: #c6e3c6; }
+.cites { margin: 12px 0 0; font-size: 15px; font-family: "Cascadia Mono", ui-monospace, monospace; }
+.cites .ok { color: var(--ok); margin-right: 12px; white-space: nowrap; }
+.cites .bad { color: var(--bad); font-weight: 700; margin-right: 12px; white-space: nowrap; }
+
+/* ------------------------------------------------------------------ footer */
+
+.next { margin: 26px 0 0; font-size: 18px; font-weight: 600; }
+.next a { color: var(--blue); text-decoration: none; }
+.next a:hover { text-decoration: underline; }
+
+footer {
+  padding: 16px 40px 30px;
+  font-size: 13px;
+  color: var(--muted);
+  font-family: "Cascadia Mono", ui-monospace, monospace;
+}

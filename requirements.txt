@@ -1,0 +1,23 @@
+# Notebook runtime
+ipykernel
+pandas
+
+# Demo UI
+flask
+
+# Configuration
+python-dotenv
+
+# Azure authentication and data-plane clients
+azure-identity
+azure-cosmos
+psycopg2-binary
+
+# Azure control plane: creates the PostgreSQL database and reads server parameters
+azure-mgmt-postgresqlflexibleservers
+
+# Microsoft Foundry chat and embedding clients
+# agent-framework-foundry pulls in agent-framework-core; the agent-framework
+# meta-package would add ~30 unused provider extras (Bedrock, Gemini, Ollama, ...)
+agent-framework-foundry
+azure-ai-inference

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="panel" id="p-data">
+  <h2><span class="n">1</span> One dataset</h2>
+  <p class="lede">A thousand support tickets. Four industries. Messy human text.</p>
+  {% if stats %}
+  <div class="stat-row">
+    <div class="stat"><b>{{ stats.total }}</b><span>tickets</span></div>
+    {% for d in stats.by_domain %}
+    <div class="stat"><b>{{ d.n }}</b><span>{{ d.domain }}</span></div>
+    {% endfor %}
+  </div>
+  {% if stats.sample %}
+  <table class="rows">
+    <tr><th>Ticket</th><th>Domain</th><th>Asset</th><th>Code</th><th>Team</th><th>Title as filed</th></tr>
+    <tr>
+      <td class="mono">{{ stats.sample.ticket_id }}</td>
+      <td>{{ stats.sample.domain }}</td>
+      <td>{{ stats.sample.asset }}</td>
+      <td class="mono">{{ stats.sample.error_code }}</td>
+      <td>{{ stats.sample.team }}</td>
+      <td>{{ stats.sample.title }}</td>
+    </tr>
+  </table>
+  <p class="reported">What was actually reported: <i>{{ stats.sample.description }}</i></p>
+  {% if stats.sample.resolution %}
+  <p class="reported">Fixed by: <i>{{ stats.sample.resolution }}</i></p>
+  {% endif %}
+  {% endif %}
+  {% endif %}
+  <p class="note">Same problem, no shared words. That is just how people write. Six months on you hit it again and describe it a third way, which is the problem with searching your own ticket system.</p>
+</section>
+
+<section class="panel" id="p-stores">
+  <h2><span class="n">2</span> Three ways to hold it</h2>
+  <p class="lede">The same thousand rows in all three. Counted live, not typed.</p>
+  <div class="store-row">
+    <div class="store cosmos">
+      <h3>Azure Cosmos DB</h3>
+      <b>{{ stats.total if stats else "?" }}</b><span>documents</span>
+      <p>Vectors of {{ config.COSMOS_DIMS }}, DiskANN index, full text index. Your application does AI to your data.</p>
+      <a href="{{ url_for('cosmos_page') }}">Open &rarr;</a>
+    </div>
+    <div class="store postgres">
+      <h3>Azure Database for PostgreSQL</h3>
+      <b>{{ pg_stats.total if pg_stats else "?" }}</b><span>rows</span>
+      <p>Vectors of {{ config.POSTGRES_DIMS }}, pgvector and DiskANN. Your data does AI to itself.</p>
+      <a href="{{ url_for('postgres_page') }}">Open &rarr;</a>
+    </div>
+    <div class="store graph">
+      <h3>Apache AGE graph</h3>
+      <b>{{ graph_stats.ticket if graph_stats else "?" }}</b><span>ticket nodes, {{ graph_stats.edges if graph_stats else "?" }} edges</span>
+      <p>Assets, teams and fault codes, in the same PostgreSQL server. Answers what search cannot reach.</p>
+      <a href="{{ url_for('graph_page') }}">Open &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<section class="panel foundry" id="p-models">
+  <h2><span class="n">3</span> One Foundry account behind all of it</h2>
+  <p class="lede">Read live from Azure. Not a slide.</p>
+  <div class="controls"><button data-run="models" data-target="models">Read the deployments</button></div>
+  <div class="out" id="out-models"></div>
+
+  <table class="rows">
+    <tr><th>Who makes the call</th><th>Model</th><th>Authenticated as</th></tr>
+    <tr>
+      <td>My application, to turn a question into a vector</td>
+      <td class="mono">{{ config.COSMOS_MODEL }} at {{ config.COSMOS_DIMS }}</td>
+      <td>my signed-in Entra identity</td>
+    </tr>
+    <tr>
+      <td>My application, to answer using the retrieved tickets</td>
+      <td class="mono">{{ config.CHAT_MODEL }}</td>
+      <td>my signed-in Entra identity</td>
+    </tr>
+    <tr>
+      <td><b>The PostgreSQL server itself, from inside a query</b></td>
+      <td class="mono">{{ config.POSTGRES_MODEL }} at {{ config.POSTGRES_DIMS }}</td>
+      <td><b>its own managed identity</b></td>
+    </tr>
+  </table>
+  <p class="note">The first two are an application calling a model, which is ordinary. The third is a database calling a model, which is not. Cosmos never talks to Foundry at all: my code does that and sends the vector along with the query.</p>
+  <p class="note">No API keys anywhere, and not by choice. Key authentication is switched off on both the Foundry account and Cosmos, and PostgreSQL has password authentication disabled. The <code>azure_ai</code> extension has a setting for an API key and ours is empty.</p>
+</section>
+
+<section class="panel foundry" id="p-embed">
+  <h2><span class="n">4</span> What an embedding actually is</h2>
+  <p class="lede">Text in, numbers out. Watch it happen once.</p>
+  <div class="controls">
+    <input id="embed-text" type="text" value="pump vibrating badly above 80 percent load">
+    <button data-run="embed" data-target="embed">Embed it</button>
+  </div>
+  <div class="out" id="out-embed"></div>
+  <p class="note">A list of numbers, and a position in space. Nothing in there understands pumps. It only places similar meanings near each other, which turns out to be enough.</p>
+</section>
+
+<p class="next"><a href="{{ url_for('cosmos_page') }}">Start with Cosmos DB &rarr;</a></p>
+
+{% endblock %}

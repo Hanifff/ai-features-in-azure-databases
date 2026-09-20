@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+{# Every panel is driven the same way: pick a prepared query, press run. #}
+{% macro picker(panel, options, label='Run', endpoint=None, target=None) %}
+  <div class="controls">
+    <select id="q-{{ target or panel }}">
+      {% for q in options %}<option value="{{ q.value }}">{{ q.label }}</option>{% endfor %}
+    </select>
+    <button data-run="{{ endpoint or panel }}" data-target="{{ target or panel }}">{{ label }}</button>
+  </div>
+{% endmacro %}
+
+<header>
+  <div class="head-row">
+    <div>
+      <h1>{{ title }}</h1>
+      <p class="sub">{{ subtitle }}</p>
+    </div>
+    <nav>
+      <a href="{{ url_for('overview_page') }}" class="{{ 'on overview' if page == 'overview' }}">Overview</a>
+      <a href="{{ url_for('cosmos_page') }}" class="{{ 'on cosmos' if page == 'cosmos' }}">Cosmos DB</a>
+      <a href="{{ url_for('postgres_page') }}" class="{{ 'on postgres' if page == 'postgres' }}">PostgreSQL</a>
+      <a href="{{ url_for('graph_page') }}" class="{{ 'on graph' if page == 'graph' }}">Graph</a>
+    </nav>
+  </div>
+</header>
+
+{% if error %}
+<div class="banner error">
+  {{ error }}
+  <span class="hint">Fall back to the matching cell in <code>src/ai-db-demos.ipynb</code>.</span>
+</div>
+{% endif %}
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer>
+  <span>{{ config.COSMOS_DATABASE }}/{{ config.COSMOS_CONTAINER }} &middot; {{ config.POSTGRES_DB }}.{{ config.POSTGRES_TABLE }} &middot; {{ config.FOUNDRY_ACCOUNT }}</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/demo.js') }}"></script>
+</body>
+</html>

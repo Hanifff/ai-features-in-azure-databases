@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "base.html" import picker %}
+{% block content %}
+
+<section class="panel postgres" id="p-pg-data">
+  <h2><span class="n">1</span> Same tickets, relational</h2>
+  <p class="lede">The identical thousand rows, in PostgreSQL.</p>
+  {% if stats %}
+  <div class="stat-row">
+    <div class="stat"><b>{{ stats.total }}</b><span>rows</span></div>
+    {% for d in stats.by_domain %}
+    <div class="stat"><b>{{ d.n }}</b><span>{{ d.domain }}</span></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <p class="note">Same model as Cosmos, half the width: {{ config.POSTGRES_DIMS }} dimensions instead of {{ config.COSMOS_DIMS }}, because the index limit differs, not the model and not the database. Same model both sides means any difference you see here is the database.</p>
+</section>
+
+<section class="panel postgres" id="p-pg-search">
+  <h2><span class="n">2</span> The database calls the model</h2>
+  <p class="lede">No vector in the query. No key in this app. Third button: it writes the answer too.</p>
+  <div class="controls">
+    <select id="q-pg-search">
+      {% for q in catalogue.postgres %}<option value="{{ q.value }}">{{ q.label }}</option>{% endfor %}
+    </select>
+    <button data-run="pg/search" data-target="pg-search">Run</button>
+    <button data-run="pg/explain" data-target="pg-explain" data-picker="pg-search" class="secondary">Show the query plan</button>
+    <button data-run="pg/answer" data-target="pg-answer" data-picker="pg-search" class="secondary">Let the database answer it</button>
+  </div>
+  <div class="out" id="out-pg-search"></div>
+  <div class="out" id="out-pg-explain"></div>
+  <div class="out" id="out-pg-answer"></div>
+</section>
+
+<section class="panel postgres" id="p-pg-agg">
+  <h2><span class="n">3</span> Meaning, then GROUP BY</h2>
+  <p class="lede">A vector search is just rows. SQL does the rest.</p>
+  {{ picker('postgres', catalogue.postgres, 'Run', 'pg/aggregate', 'pg-agg') }}
+  <div class="out" id="out-pg-agg"></div>
+</section>
+
+<section class="panel postgres" id="p-pg-hybrid">
+  <h2><span class="n">4</span> Hybrid, by hand</h2>
+  <p class="lede">What Cosmos did in one clause. You own every line.</p>
+  {{ picker('postgres', catalogue.postgres, 'Run', 'pg/hybrid', 'pg-hybrid') }}
+  <div class="out" id="out-pg-hybrid"></div>
+</section>
+
+<p class="next"><a href="{{ url_for('graph_page') }}">Next: the graph, in this same server &rarr;</a></p>
+
+{% endblock %}

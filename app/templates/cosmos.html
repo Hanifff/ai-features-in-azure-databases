@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "base.html" import picker %}
+{% block content %}
+
+<section class="panel cosmos" id="p-keyword">
+  <h2><span class="n">1</span> Keyword: finds words</h2>
+  <p class="lede">Matches what you typed. Nothing more.</p>
+  {{ picker('keyword', catalogue.keyword) }}
+  <div class="out" id="out-keyword"></div>
+</section>
+
+<section class="panel cosmos" id="p-vector">
+  <h2><span class="n">2</span> Vector: finds meaning</h2>
+  <p class="lede">Different words, same fault.</p>
+  {{ picker('vector', catalogue.vector) }}
+  <div class="out" id="out-vector"></div>
+</section>
+
+<section class="panel cosmos" id="p-filtered">
+  <h2><span class="n">3</span> Vector + filter</h2>
+  <p class="lede">Meaning and metadata in one query, not one after the other.</p>
+  <div class="controls">
+    <select id="q-filtered">
+      {% for q in catalogue.filtered %}<option value="{{ q.value }}">{{ q.label }}</option>{% endfor %}
+    </select>
+    <select id="f-severity">
+      <option value="">any severity</option>
+      {% for s in facets.severities %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+    </select>
+    <select id="f-domain">
+      <option value="">any domain</option>
+      {% for d in facets.domains %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+    </select>
+    <button data-run="filtered" data-target="filtered">Run</button>
+  </div>
+  <div class="out" id="out-filtered"></div>
+</section>
+
+<section class="panel cosmos" id="p-hybrid">
+  <h2><span class="n">4</span> Hybrid: both at once</h2>
+  <p class="lede">Two rankings, fused by the database. One clause.</p>
+  {{ picker('hybrid', catalogue.hybrid) }}
+  <div class="out" id="out-hybrid"></div>
+</section>
+
+<section class="panel foundry" id="p-grounded">
+  <h2><span class="n">5</span> Your search decides what the AI knows</h2>
+  <p class="lede">Same model, same prompt, same tickets. Only the search differs.</p>
+  {{ picker('grounded', catalogue.grounded, 'Ask both') }}
+  <div class="out" id="out-grounded"></div>
+</section>
+
+<p class="next"><a href="{{ url_for('postgres_page') }}">Next: the same data in PostgreSQL &rarr;</a></p>
+
+{% endblock %}

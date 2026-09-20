@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "base.html" import picker %}
+{% block content %}
+
+<section class="panel graph" id="p-graph">
+  <h2><span class="n">1</span> Where else will this break?</h2>
+  <p class="lede">Search looks backwards. The graph looks ahead.</p>
+  {{ picker('graph', catalogue.graph, 'Expand from the search') }}
+  <div class="out" id="out-graph"></div>
+</section>
+
+<section class="panel graph">
+  <h2><span class="n">2</span> Not just another search</h2>
+  <p class="lede">The honest claim is narrower, and stronger.</p>
+  <table class="rows">
+    <tr><th></th><th>Returns</th><th>Answers</th></tr>
+    <tr>
+      <td><b>Hybrid search</b></td>
+      <td>tickets, ranked better</td>
+      <td>which records resemble my question</td>
+    </tr>
+    <tr>
+      <td><b>SQL on the same table</b></td>
+      <td>assets with this fault code</td>
+      <td>where this exact code has appeared</td>
+    </tr>
+    <tr>
+      <td><b>The graph</b></td>
+      <td>assets reached over a semantic edge</td>
+      <td>where this failure appears under another name</td>
+    </tr>
+  </table>
+  <p class="note">
+    Two walks run here. One follows the fault code, which was already a column,
+    and SQL could have done that on its own. The other follows an edge built
+    from the embeddings, and that is the one that crosses into assets sharing no
+    code, no component and no domain with the question. Both run inside the same
+    PostgreSQL server that did the vector search.
+  </p>
+</section>
+
+<p class="next"><a href="{{ url_for('overview_page') }}">Back to the overview &rarr;</a></p>
+
+{% endblock %}
