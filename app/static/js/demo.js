@@ -140,6 +140,46 @@ function renderPgAnswer(data) {
     <div class="meta">${esc(data.model)}, called by PostgreSQL &middot; ${data.ms} ms &middot; no application code in the loop</div>`;
 }
 
+function renderCodeMap(data) {
+  let svg = `<svg class="graphviz codemap" viewBox="0 0 ${data.width} ${data.height}" preserveAspectRatio="xMidYMid meet">`;
+
+  for (const e of data.edges) {
+    svg += `<line class="edge ${e.crosses ? "crosses" : "within"}" `
+        +  `x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" `
+        +  `stroke-width="${1.5 + Math.min(e.weight / 12, 6)}"/>`;
+  }
+  for (const n of data.nodes) {
+    const dim = n.linked ? "" : " island";
+    svg += `<g class="node domain-${esc(n.domain.toLowerCase())}${dim}">`
+        +  `<circle cx="${n.x}" cy="${n.y}" r="${n.r}"/>`
+        +  `<text class="code" x="${n.x}" y="${n.y + 5}">${esc(n.code)}</text>`
+        +  `<text class="label" x="${n.x}" y="${n.y + n.r + 18}">${esc(n.component)}</text>`
+        +  `</g>`;
+  }
+  svg += "</svg>";
+
+  const legend = '<p class="legend">'
+    + data.domains.map(d => `<span class="key domain-${esc(d.toLowerCase())}"></span>${esc(d)}`).join("")
+    + '<span class="key line crosses"></span>link crosses a domain'
+    + '<span class="key line within"></span>link inside one domain</p>';
+
+  const verdict = `<p class="reveal"><b>${data.edges.length} semantic links between ${data.nodes.length} fault codes, `
+    + `${data.crossing} of them crossing a domain.</b> Not one of these is a column. `
+    + `Every line was computed from the text people wrote.</p>`;
+
+  let table = "<table class='rows'><tr><th>Fault code</th><th>Resembles</th><th>Shared tickets</th><th>Crosses domains?</th></tr>";
+  for (const e of data.edges) {
+    table += `<tr><td class="mono">${esc(e.from)}</td><td class="mono">${esc(e.to)}</td>`
+          +  `<td>${e.weight}</td>`
+          +  `<td>${e.crosses ? "<b class='no'>yes</b>" : "no"}</td></tr>`;
+  }
+  table += "</table>";
+
+  return legend + svg + verdict + table
+    + `<details open><summary>The Cypher that ran</summary><pre class="sql">${esc(data.cypher)}</pre></details>`
+    + `<div class="meta">${data.ms} ms</div>`;
+}
+
 function renderEmbed(data) {
   return `
     <table class="rows">
@@ -252,6 +292,8 @@ async function run(button) {
       out.innerHTML = renderModels(data);
     } else if (endpoint === "graph") {
       out.innerHTML = renderGraph(data);
+    } else if (endpoint === "codemap") {
+      out.innerHTML = renderCodeMap(data);
     } else {
       out.innerHTML = meta(data) + table(data.rows) + sqlBlock(data.sql) + noteBlock(data.note);
     }

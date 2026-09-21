@@ -179,6 +179,37 @@ svg.graphviz .node.meaning text.count { fill: var(--graph); }
 }
 td b.no { color: var(--graph); }
 
+/* ------------------------------------------------------- code map, panel 3 */
+svg.codemap .edge.crosses { stroke: var(--graph); opacity: 0.75; }
+svg.codemap .edge.within { stroke: var(--line-2); }
+svg.codemap .node circle { stroke-width: 3; fill: #fff; }
+svg.codemap .node.domain-maritime circle { stroke: var(--pg); }
+svg.codemap .node.domain-retail circle { stroke: var(--cosmos); }
+svg.codemap .node.domain-energy circle { stroke: var(--ok); }
+svg.codemap .node.domain-payments circle { stroke: var(--foundry); }
+svg.codemap .node.island circle { stroke: var(--line-2); }
+svg.codemap .node.island text { fill: var(--muted); }
+svg.codemap text.code { font-family: "Cascadia Mono", monospace; font-size: 13px; }
+svg.codemap text.label { font-size: 13px; font-weight: 500; fill: var(--muted); }
+
+.legend { margin: 0 0 10px; font-size: 14px; color: var(--muted); }
+.legend .key {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 6px 0 18px;
+  border-radius: 50%;
+  border: 3px solid var(--line-2);
+  vertical-align: -1px;
+}
+.legend .key:first-child { margin-left: 0; }
+.legend .key.domain-maritime { border-color: var(--pg); }
+.legend .key.domain-retail { border-color: var(--cosmos); }
+.legend .key.domain-energy { border-color: var(--ok); }
+.legend .key.domain-payments { border-color: var(--foundry); }
+.legend .key.line { width: 22px; height: 0; border-radius: 0; border: none; border-top: 3px solid var(--line-2); vertical-align: 4px; }
+.legend .key.line.crosses { border-top-color: var(--graph); }
+
 /* ------------------------------------------------------------------ panels */
 
 main { padding: 24px 40px 60px; max-width: 1500px; }

@@ -148,6 +148,21 @@ def main() -> None:
         detail = f"{data.get('code')}, {len(data.get('assets', []))} assets, {len(meaning)} by meaning, {ms} ms"
         check(f"graph  {value[:41]}", ok, detail if ok else f"missing={missing} drawn={drawn}")
 
+    print("\nThe whole map")
+    try:
+        data, ms = post("/api/codemap", {})
+        # The panel only says anything if the embeddings linked codes that no
+        # column connects, so a cross-domain link is the thing to assert.
+        ok = (
+            not data.get("error")
+            and len(data.get("nodes", [])) == 12
+            and data.get("crossing", 0) > 0
+        )
+        detail = f"{len(data.get('nodes', []))} codes, {len(data.get('edges', []))} links, {data.get('crossing')} cross-domain, {ms} ms"
+        check("codemap", ok, detail)
+    except Exception as exc:
+        check("codemap", False, str(exc)[:70])
+
     if args.browser:
         print("\nEvery button, in a real browser")
         browser_pass()
@@ -182,7 +197,7 @@ def browser_pass() -> None:
         "/": ["embed"],
         "/cosmos": ["keyword", "vector", "filtered", "hybrid", "grounded"],
         "/postgres": ["pg/search", "pg/explain", "pg/answer", "pg/aggregate", "pg/hybrid"],
-        "/graph": ["graph"],
+        "/graph": ["graph", "codemap"],
     }
     with sync_playwright() as play:
         browser = play.chromium.launch()

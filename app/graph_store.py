@@ -157,6 +157,91 @@ def _layout(code: str, assets: list[dict], width: int = 1100, height: int = 460)
     return {"width": width, "height": height, "nodes": nodes, "edges": edges}
 
 
+def code_map(width: int = 1100, height: int = 520) -> dict:
+    """Every fault code, and the semantic links between them.
+
+    The expand() diagram is a star because it is one question's answer. This is
+    the whole graph at a level a projector can actually show: twelve fault types
+    and the pairs the embeddings say describe the same failure. The links that
+    cross a domain boundary are the ones worth pointing at.
+    """
+    nodes_cypher = """MATCH (c:Code)<-[:CODED]-(t:Ticket)
+RETURN c.code, c.component, c.domain, count(t)"""
+
+    edges_cypher = """MATCH (c1:Code)<-[:CODED]-(:Ticket)
+      -[:SIMILAR_TO]->(:Ticket)-[:CODED]->(c2:Code)
+RETURN c1.code, c2.code, count(*)"""
+
+    conn = postgres_store._session()
+    try:
+        with conn.cursor() as cur:
+            raw_nodes = _cypher(cur, nodes_cypher,
+                                "code agtype, component agtype, domain agtype, tickets agtype")
+            raw_edges = _cypher(cur, edges_cypher, "a agtype, b agtype, n agtype")
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+
+    codes = {}
+    for code_v, component_v, domain_v, tickets_v in raw_nodes:
+        code = _value(code_v)
+        codes[code] = {
+            "code": code,
+            "component": _value(component_v),
+            "domain": _value(domain_v),
+            "tickets": int(_value(tickets_v) or 0),
+        }
+
+    # A resembles B and B resembles A are the same line on screen.
+    pairs: dict[tuple[str, str], int] = {}
+    for a_v, b_v, n_v in raw_edges:
+        a, b = _value(a_v), _value(b_v)
+        if a == b:
+            continue
+        key = (a, b) if a < b else (b, a)
+        pairs[key] = pairs.get(key, 0) + int(_value(n_v) or 0)
+
+    ordered = sorted(codes.values(), key=lambda c: (c["domain"], c["code"]))
+    cx, cy = width / 2, height / 2
+    radius_x, radius_y = width / 2 - 150, height / 2 - 80
+    placed = {}
+    for i, entry in enumerate(ordered):
+        angle = -math.pi / 2 + (2 * math.pi * i / max(len(ordered), 1))
+        entry = dict(entry)
+        entry["x"] = cx + radius_x * math.cos(angle)
+        entry["y"] = cy + radius_y * math.sin(angle)
+        entry["r"] = 16 + min(entry["tickets"] / 6, 22)
+        placed[entry["code"]] = entry
+
+    edges = []
+    for (a, b), weight in sorted(pairs.items(), key=lambda kv: -kv[1]):
+        if a not in placed or b not in placed:
+            continue
+        edges.append({
+            "from": a,
+            "to": b,
+            "weight": weight,
+            "crosses": placed[a]["domain"] != placed[b]["domain"],
+            "x1": placed[a]["x"], "y1": placed[a]["y"],
+            "x2": placed[b]["x"], "y2": placed[b]["y"],
+        })
+
+    linked = {c for edge in edges for c in (edge["from"], edge["to"])}
+    for entry in placed.values():
+        entry["linked"] = entry["code"] in linked
+
+    return {
+        "width": width,
+        "height": height,
+        "nodes": list(placed.values()),
+        "edges": edges,
+        "crossing": sum(1 for e in edges if e["crosses"]),
+        "domains": sorted({e["domain"] for e in placed.values()}),
+        "cypher": edges_cypher,
+    }
+
+
 def stats() -> dict:
     conn = postgres_store._session()
     try:
