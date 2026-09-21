@@ -139,16 +139,6 @@ def api_graph():
         return fail(exc)
 
 
-@app.post("/api/codemap")
-def api_codemap():
-    try:
-        result, ms = timed(graph_store.code_map)
-        result["ms"] = ms
-        return jsonify(result)
-    except Exception as exc:
-        return fail(exc)
-
-
 @app.post("/api/embed")
 def api_embed():
     """Panel 2. One live embedding, so the corpus vectors are not taken on trust."""
