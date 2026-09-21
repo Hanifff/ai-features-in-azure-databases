@@ -47,7 +47,13 @@ def current_user_name() -> str:
 
 
 def connect(database: str | None = None):
-    """Password is a short-lived Entra token. There is no stored secret anywhere."""
+    """Password is a short-lived Entra token. There is no stored secret anywhere.
+
+    The timeouts are not optional. Moving between networks leaves the old socket
+    half-open: it still looks connected, and a query on it blocks forever. TCP
+    keepalives turn that into an error the caller can recover from, in about
+    twenty seconds rather than never.
+    """
     token = foundry.credential().get_token(PG_SCOPE).token
     return psycopg2.connect(
         host=config.POSTGRES_HOST,
@@ -56,6 +62,13 @@ def connect(database: str | None = None):
         user=current_user_name(),
         password=token,
         sslmode="require",
+        connect_timeout=10,
+        keepalives=1,
+        keepalives_idle=10,
+        keepalives_interval=5,
+        keepalives_count=2,
+        # Longest honest query here is the in-database answer at about 3 s.
+        options="-c statement_timeout=30000",
     )
 
 
@@ -72,7 +85,10 @@ def _session():
                 cur.execute("SELECT 1")
             return conn
         except psycopg2.Error:
-            conn.close()
+            try:
+                conn.close()
+            except psycopg2.Error:
+                pass
     _shared["conn"] = connect()
     return _shared["conn"]
 
